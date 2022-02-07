@@ -39,6 +39,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public List<Role> roles() {
+        log.info("Fetching all roles");
+        return roleRepository.findAll();
+    }
+
+    @Override
     public void addRoleToUser(String username, String roleName) {
         log.info("Adding role {} to user {}", roleName, username);
         User user = userRepository.findByUsername(username);
@@ -52,6 +58,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Fetching user {}", userName);
 
         return userRepository.findByUsername(userName);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        log.info("Fetching user by id {}", id);
+        User user = userRepository.findById(id).orElse(null);
+        log.info("User found {}", user.getFirstName());
+        return user;
     }
 
     @Override

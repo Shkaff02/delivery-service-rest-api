@@ -1,6 +1,8 @@
 package com.example.delivery.controller;
 
 import com.example.delivery.domain.Order;
+import com.example.delivery.dto.OrderDTO;
+import com.example.delivery.mappers.OrderMapper;
 import com.example.delivery.service.OrderService;
 import com.example.delivery.service.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +18,13 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAll() {
-        return ResponseEntity.ok().body(orderService.getAll());
+    public ResponseEntity<List<OrderDTO>> getAll() {
+        return ResponseEntity.ok().body(OrderMapper.INSTANCE.OrdersToOrdersDTO(orderService.getAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> findOrderById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(orderService.getOrderById(id));
+    public ResponseEntity<OrderDTO> findOrderById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(OrderMapper.INSTANCE.OrderToOrderDTO(orderService.getOrderById(id)));
     }
 
     @PostMapping

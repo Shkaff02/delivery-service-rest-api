@@ -2,6 +2,8 @@ package com.example.delivery.controller;
 
 import com.example.delivery.domain.Dish;
 import com.example.delivery.domain.Restaurant;
+import com.example.delivery.dto.RestaurantDTO;
+import com.example.delivery.mappers.RestaurantMapper;
 import com.example.delivery.service.RestaurantServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +18,19 @@ public class RestaurantController {
     private final RestaurantServiceImpl restaurantService;
 
     @GetMapping
-    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
-        return ResponseEntity.ok().body(restaurantService.getAll());
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
+        return ResponseEntity.ok().body(RestaurantMapper.INSTANCE
+                .RestaurantsToRestaurantsDTO(restaurantService.getAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(restaurantService.getRestaurantById(id));
+    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(RestaurantMapper.INSTANCE.toDTO(restaurantService.getRestaurantById(id)));
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<Restaurant> getRestaurantByName(@PathVariable String name) {
-        return ResponseEntity.ok().body(restaurantService.getRestaurantByName(name));
+    public ResponseEntity<RestaurantDTO> getRestaurantByName(@PathVariable String name) {
+        return ResponseEntity.ok().body(RestaurantMapper.INSTANCE.toDTO(restaurantService.getRestaurantByName(name)));
     }
 
     @PostMapping

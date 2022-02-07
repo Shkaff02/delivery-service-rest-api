@@ -6,15 +6,16 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.delivery.domain.Role;
 import com.example.delivery.domain.User;
+import com.example.delivery.dto.RoleDTO;
+import com.example.delivery.dto.UserDTO;
+import com.example.delivery.mappers.RoleMapper;
+import com.example.delivery.mappers.UserMapper;
 import com.example.delivery.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,13 +32,27 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController @RequestMapping("/api")
-@RequiredArgsConstructor
+@RequiredArgsConstructor @Slf4j
 public class UserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        return ResponseEntity.ok().body(UserMapper.INSTANCE.UsersToUsersDTO(userService.getUsers()));
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<List<RoleDTO>> getRoles() {
+        return ResponseEntity.ok().body(RoleMapper.INSTANCE.RolesToRoleDTO(userService.roles()));
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        log.info("User found {}", user.getFirstName());
+        UserDTO userDTO = UserMapper.INSTANCE.toDTO(user);
+        log.info("UserDRO created {}", userDTO.getFirstName());
+        return ResponseEntity.ok().body(userDTO);
     }
 
     @PostMapping("/users")
